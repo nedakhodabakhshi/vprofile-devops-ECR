@@ -1,3 +1,4 @@
 #!/bin/bash
-docker stop vp-web vp-app vp-db vp-memcache vp-mq
-docker rm vp-web vp-app vp-db vp-memcache vp-mq
+echo "Stopping any running containers..."
+docker stop $(docker ps -q) || true
+docker rm $(docker ps -a -q) || true
