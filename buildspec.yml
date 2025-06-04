@@ -1,2 +1,44 @@
-.
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: 557690612191
+    REGION: us-east-1
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com)
+      - echo Setting IMAGE_TAG as the Git commit ID...
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo Building Docker images...
+      - docker build -t vp-web:$IMAGE_TAG ./vp-web
+      - docker build -t vp-app:$IMAGE_TAG ./vp-app
+      - docker build -t vp-db:$IMAGE_TAG ./vp-db
+      - docker build -t vp-memcache:$IMAGE_TAG ./vp-memcache
+      - docker build -t vp-mq:$IMAGE_TAG ./vp-mq
+
+      - echo Tagging images for ECR...
+      - docker tag vp-web:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-web:$IMAGE_TAG
+      - docker tag vp-app:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-app:$IMAGE_TAG
+      - docker tag vp-db:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-db:$IMAGE_TAG
+      - docker tag vp-memcache:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-memcache:$IMAGE_TAG
+      - docker tag vp-mq:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-mq:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Pushing images to ECR...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-web:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-app:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-db:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-memcache:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/vp-mq:$IMAGE_TAG
+
+artifacts:
+  files:
+    - '**/*'
+
 
