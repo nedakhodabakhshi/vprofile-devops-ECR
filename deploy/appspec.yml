@@ -5,12 +5,17 @@ files:
     destination: /home/ubuntu/vprofile
 
 hooks:
-  BeforeInstall:
+  ApplicationStop:
     - location: deploy/scripts/stop_containers.sh
-      timeout: 60
-  AfterInstall:
+      timeout: 300
+      runas: root
+
+  BeforeInstall:
     - location: deploy/scripts/install_dependencies.sh
-      timeout: 180
+      timeout: 300
+      runas: root
+
   ApplicationStart:
     - location: deploy/scripts/start_containers.sh
-      timeout: 180
+      timeout: 300
+      runas: root
