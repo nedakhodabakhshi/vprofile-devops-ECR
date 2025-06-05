@@ -9,7 +9,8 @@ phases:
       - git clone https://github.com/nedakhodabakhshi/DevOps-Vprofile.git
       - cd DevOps-Vprofile
       - mvn clean install
-      - cp target/vprofile-v2.war ../vprofile-app/
+      - mkdir -p ../vprofile-app/target
+      - cp target/vprofile-v2.war ../vprofile-app/target/
       - cd ..
   build:
     commands:
