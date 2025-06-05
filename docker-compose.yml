@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  mysql:
+    image: 557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile-repo:mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: accounts
+    ports:
+      - "3306:3306"
+
+  memcached:
+    image: 557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile-repo:memcached
+    ports:
+      - "11211:11211"
+
+  rabbitmq:
+    image: 557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile-repo:rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  tomcat1:
+    image: 557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile-repo:tomcat1
+    ports:
+      - "8081:8080"
+
+  tomcat2:
+    image: 557690612191.dkr.ecr.us-east-1.amazonaws.com/vprofile-repo:tomcat2
+    ports:
+      - "8082:8080"
